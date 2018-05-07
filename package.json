@@ -1,0 +1,26 @@
+{
+  "name": "botbotbot",
+  "version": "1.0.0",
+  "description": "facebook bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "-testing"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jenny12321/fb_bot.git"
+  },
+  "keywords": [
+    "fbBot"
+  ],
+  "author": "Jenny Wang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jenny12321/fb_bot/issues"
+  },
+  "homepage": "https://github.com/Jenny12321/fb_bot#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3"
+  }
+}
