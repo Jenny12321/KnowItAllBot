@@ -4,14 +4,8 @@ const apiAiClient = require('apiai')(API_AI_TOKEN);
 const FACEBOOK_ACCESS_TOKEN = 'EAAXIZBtu4SfUBANS44TCBDQr1ExIgas1L50l1uaMO2aeTY6inki0AjCbsh8HNH9GlNU0SHEf7acTJFgsZC5l4DucZAZCV5h0tSqOPoZB8VtvQZChYiUQNIuzy3RLL6ebaOwMbTlaKrsPXMWMxaa8NvZAXxV0rD4M0X1OizrCWoGnuitfV3ZAwZByO';
 const request = require('request');
 
-var script = document.createElement('script');
-    script.type = 'text/javascript';
-
-    script.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js';
-    document.body.appendChild(script);
-
 const sendTextMessage = (senderId, text) => {
-
+	console.warn('sending')
 	 request({
 		 url: "https://graph.facebook.com/v2.6/me/messages",
 		 qs: { access_token: FACEBOOK_ACCESS_TOKEN },
@@ -21,6 +15,7 @@ const sendTextMessage = (senderId, text) => {
 		 message: { text },
 		 }
 	});
+	 console.warn('sent')
 };
 
 module.exports = (event) => {
@@ -31,23 +26,33 @@ module.exports = (event) => {
 	const apiaiSession = apiAiClient.textRequest(message, { sessionId: 'botbotbot_bot'});
 
 	apiaiSession.on('response', (response) => {
-		//const result = response.result.fulfillment.speech;
-		sendTextMessage(senderId, "HEY1");
+		const result = response.result.fulfillment.speech;
+		//console.warn(response.result.fulfillment)
+		var input = response.result.resolvedQuery
+		console.log(response.result.resolvedQuery);
 
-		$.ajax({
-                type: 'POST',
-                contentType: 'application/json',
-                //data: JSON.stringify({params:message}),
-                url: "http://127.0.0.1:5000/postmethod",
-                success: function (e) {
-                    sendTextMessage(senderId, e);
-                },
-                error: function(error) {
-                	sendTextMessage(senderId, error);;
-            }
-        });
+		//small talk if user does not say key word
+		if (!(input.startsWith("Question:"))) {
+			sendTextMessage(senderId, result);
+		}
+		//otherwise post to api to answer question
+		else {
+			//post request to scrape question
+			var ans;
+			input = input.replace("Question:", "");
+			console.log(input);
 
-		sendTextMessage(senderId, "HEY");
+	  		request({
+				url: "http://127.0.0.1:5000/postmethod",
+				method: "POST",
+				json: {
+				params: input,
+				}}, function(error, response, body) {
+				 	ans = body.toString();
+				 	//console.log(ans)
+					sendTextMessage(senderId, ans);
+			})
+  		}
 	});
 
 	apiaiSession.on('error', error => console.log(error));

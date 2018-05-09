@@ -10,20 +10,23 @@ app = Flask(__name__)
 
 @app.route("/postmethod", methods = ['GET', 'POST'])
 def get_results():
-	print "asdfasdf"
+	#print "asdfasdf"
 	if request.method == 'POST':
 
-		#req = request.form.to_dict()
+		req = request.form.to_dict()
 		#----
-		# req = request.get_data()
-		# jsonData = json.loads(req)
-		# question = jsonData['params']
+		req = request.get_data()
+		jsonData = json.loads(req)
+		print (jsonData)
+		question = jsonData['params']
 		#----
-		
+
 		#user's question
 		
 		#-----search_item = question
-		search_item = "what is the largest country"
+		search_item = question
+
+		print(search_item)
 		#google url
 		url = 'https://www.google.ca/search?q=' + search_item
 
@@ -45,7 +48,7 @@ def get_results():
 
 			if ("http" in answer):
 				ind = answer.index("http")
-				answer = answer[:ind] + "\n" + answer[ind:]
+				#answer = answer[:ind] + "\n" + answer[ind:]
 
 			if (answer != ''):
 				print answer
